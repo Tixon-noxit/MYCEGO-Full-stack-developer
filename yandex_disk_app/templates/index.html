@@ -3,9 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Яндекс.Диск Viewer</title>
 </head>
 <body>
+    <h1>Просмотр файлов на Яндекс.Диске</h1>
+    <form method="POST">
+        <input type="text" name="public_key" placeholder="Введите публичную ссылку" required>
+        <button type="submit">Показать файлы</button>
+    </form>
     
+    {% if files %}
+    <ul>
+        {% for file in files %}
+        <li>
+            {{ file.name }} - {{ file.size|default('Unknown size') }}
+            <form method="POST" action="/download">
+                <input type="hidden" name="public_key" value="{{ file.public_key }}">
+                <input type="hidden" name="file_path" value="{{ file.path }}">
+                <button type="submit">Скачать</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 </body>
 </html>
