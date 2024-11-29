@@ -1,0 +1,21 @@
+<div id="modal-message" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Сообщение</h2>
+        <p id="modal-message-content"></p>
+    </div>
+</div>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalMessageContent = document.getElementById('modal-message-content');
+                    modalMessageContent.textContent = "{{ message }}";
+                    const modal = UIkit.modal('#modal-message');
+                    modal.show();
+                });
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endwith %}

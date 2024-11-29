@@ -4,12 +4,15 @@
             <div uk-navbar>
                 <div class="uk-navbar-center">
                     <div class="uk-navbar-center-left">
+                        {% if  g.access_token %}
                         <ul class="uk-navbar-nav">
                             <li class="uk-active"><a href="/">Главная</a></li>
                         </ul>
+                        {% endif %}
                     </div>
                     <a class="uk-navbar-item uk-logo" href="/">Яндекс.Диск Viewer</a>
                     <div class="uk-navbar-center-right">
+                    {% if  g.access_token %}
                         <ul class="uk-navbar-nav">
                             {% if g.access_token %}
                                 <li><a href="/logout">Выйти</a></li>
@@ -17,6 +20,7 @@
                                 <li><a href="/login">Войти</a></li>
                             {% endif %}
                         </ul>
+                    {% endif %}
                     </div>
                 </div>
             </div>

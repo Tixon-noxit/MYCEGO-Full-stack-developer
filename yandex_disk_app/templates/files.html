@@ -4,8 +4,20 @@
 {% endblock %}
 {% block title %}Файлы на Яндекс.Диске{% endblock %}
 {% block content %}
-    <div class="uk-container uk-margin-top">
 
+    {#    Модальное окно    #}
+    <div id="modal-example" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Внимание!</h2>
+            <p>Выберите файлы для скачивания.</p>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Закрыть</button>
+            </p>
+        </div>
+    </div>
+
+    <div class="uk-container uk-margin-top">
+        {#    Навигация    #}
         <nav class="uk-margin-bottom">
             <ul class="uk-breadcrumb">
                 <li>
@@ -23,25 +35,74 @@
             </ul>
         </nav>
 
+        {#    Список файлов    #}
         <ul class="uk-list uk-list-divider">
             {% for file in context.files %}
-                <li>
-                    {% if file.size %}
-                        <img src="{{ file.preview }}" width="100" height="67" alt="{{ file.name }}">
-                    {% endif %}
-                    {{ file.name }} - {{ (file.size / (1024 * 1024)) | round(2) if file.size else 'Папка' }}
-
-                    {% if not file.size %}
-                        <a href="{{ url_for('files.browse_folder', path=file['path']) }}"
-                           class="uk-button uk-button-text">Открыть</a>
-                    {% elif file.file %}
-
-                        <a href="{{ file.file }}" target="_blank" class="uk-button uk-button-text">Скачать</a>
-                    {% endif %}
+                <li class="uk-flex uk-flex-middle">
+                    <input type="checkbox" class="uk-margin-small-right" name="selected_files" value="{{ file.file }}"
+                           {% if not file.file %}disabled{% endif %}>
+                    <div>
+                        {% if file.size %}
+                            <img src="{{ file.preview }}" width="100" height="67" alt="{{ file.name }}">
+                        {% else %}
+                            <img src="/static/img/folder.svg" width="100" height="50" alt="{{ file.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="uk-flex-1 uk-margin-left">
+                        <span>{{ file.name }} - {{ (file.size / (1024 * 1024)) | round(2) ~ ' Mb' if file.size else 'Папка' }}</span>
+                    </div>
+                    <div>
+                        {% if not file.size %}
+                            <a href="{{ url_for('files.browse_folder', path=file['path']) }}"
+                               class="uk-button uk-button-primary uk-button-small">Открыть</a>
+                        {% elif file.file %}
+                            <a href="{{ file.file }}" target="_blank"
+                               class="uk-button uk-button-primary uk-button-small">Скачать</a>
+                        {% endif %}
+                    </div>
                 </li>
             {% endfor %}
         </ul>
 
+         {% if context.files|selectattr('file', 'defined')|list|length > 1 %}
+            <div class="uk-margin-top uk-text-right">
+                <button id="download-selected" class="uk-button uk-button-danger">Скачать выбранные</button>
+            </div>
+        {% endif %}
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.getElementById('download-selected').addEventListener('click', function () {
+            const button = document.getElementById('download-selected');
+            button.classList.add('uk-hidden');
+            setTimeout(() => {
+                button.classList.remove('uk-hidden');
+            }, 5000);
+
+            const selectedFiles = Array.from(document.querySelectorAll('input[name="selected_files"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedFiles.length === 0) {
+                const modal = UIkit.modal("#modal-example");
+                modal.show();
+                return;
+            }
+
+            selectedFiles.forEach((file, index) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = file;
+                    a.target = '_blank';
+                    a.download = '';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, 3000 * index);
+            });
+        });
+    </script>
+
 {% endblock %}
 

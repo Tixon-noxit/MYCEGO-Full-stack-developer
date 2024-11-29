@@ -1,13 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Главная{% endblock %}
 {% block content %}
-    {% if context.access_token == False %}
+    {% if not g.access_token %}
         <div class="uk-container uk-margin-top">
-            <h1 class="uk-heading-line uk-text-center"><span><a href="{{ url_for('login') }}"
-                                                                class="uk-button uk-button-primary">Авторизоваться через Яндекс</a></span>
+            <h1 class="uk-heading-line uk-text-center"><span><a href="{{ url_for('index.login') }}"
+                                                                class="uk-button uk-button-primary">Авторизоваться</a></span>
             </h1>
         </div>
     {% endif %}
 
+    <div class="uk-container uk-margin-top">
+        <form action="{{ url_for('files.browse_folder') }}" method="get">
+            <div class="uk-margin">
+                <label for="folder-link" class="uk-form-label">Введите ссылку или public_key общедоступной Яндекс папки:</label>
+                <div class="uk-form-controls">
+                    <input type="text" id="folder-link" name="public_key" class="uk-input"
+                           placeholder="https://disk.yandex.ru/d/<public_key> или <public_key>">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <button type="submit" class="uk-button uk-button-primary">Перейти</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}
 
