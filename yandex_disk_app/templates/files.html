@@ -34,11 +34,10 @@
         </ul>
 
         <ul class="uk-thumbnav" uk-margin>
-
             {% for file in context.files %}
-                {% if  file.size %}
+                {% if  file.size and file.preview %}
             <li>
-                <img src="{{ file.file }}" width="100" height="67" alt="">
+                <img src="{{ file.preview }}" width="100" height="67" alt="{{ file.name }}">
             </li>
                  {% endif %}
             {% endfor %}

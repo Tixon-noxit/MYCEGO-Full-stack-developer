@@ -1,4 +1,4 @@
-from flask import Blueprint, session, redirect, url_for, render_template
+from flask import Blueprint, session, redirect, url_for, render_template, g
 from config import YANDEX_AUTH_URL, CLIENT_ID, REDIRECT_URI
 from oauth import get_access_token
 
@@ -8,9 +8,8 @@ index_bp = Blueprint('index', __name__)
 @index_bp.route('/')
 def index():
     """Главная страница"""
-    access_token = session.get('access_token')
-    if access_token:
-        return redirect(url_for('files.show_files'))  # Указывает полный эндпоинт для show_files
+    if g.access_token:
+        return redirect(url_for('files.show_files'))
     context = {'authorized': False}
     return render_template('index.html', context=context)
 
@@ -33,11 +32,11 @@ def callback():
     token, error = get_access_token(code)
     if error:
         return f"Ошибка получения токена: {error}", 400
-    return redirect(url_for('files.show_files'))  # Указывает полный эндпоинт для show_files
+    return redirect(url_for('files.show_files'))
 
 
 @index_bp.route('/logout')
 def logout():
     """Выход из системы"""
     session.pop('access_token', None)
-    return redirect(url_for('index.index'))  # Указывает полный эндпоинт для index
+    return redirect(url_for('index.index'))

@@ -11,7 +11,7 @@
                     <a class="uk-navbar-item uk-logo" href="/">Яндекс.Диск Viewer</a>
                     <div class="uk-navbar-center-right">
                         <ul class="uk-navbar-nav">
-                            {% if context.access_token %}
+                            {% if g.access_token %}
                                 <li><a href="/logout">Выйти</a></li>
                             {% else %}
                                 <li><a href="/login">Войти</a></li>
