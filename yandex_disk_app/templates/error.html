@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Ошибка - {{ error_code }}{% endblock %}
+{% block content %}
+<div class="uk-section uk-section-large uk-section-muted uk-flex uk-flex-middle">
+    <div class="uk-container uk-text-center">
+        <h1 class="uk-heading-medium">{{ error_code }}</h1>
+        <p class="uk-text-lead">{{ error_message }}</p>
+        <a href="/" class="uk-button uk-button-primary">Вернуться на главную</a>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.27/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.27/dist/js/uikit-icons.min.js"></script>
+{% endblock %}
+
+    
+

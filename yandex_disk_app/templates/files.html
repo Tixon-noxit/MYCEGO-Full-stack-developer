@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Файлы на Яндекс.Диске{% endblock %}
+{% block content %}
+    <div class="uk-container uk-margin-top">
+        <ul class="uk-list uk-list-divider">
+            {% for file in context.files %}
+                <li>
+                    {{ file.name }} - {{ (file.size / (1024 * 1024)) | round(2) if file.size else 'Папка' }}
+                    {% if not file.size %}
+                        <a href="{{ url_for('files.browse_folder', path=file['path']) }}" class="uk-button uk-button-text">Открыть</a>
+                    {% elif file.file %}
+                        <a href="{{ file.file }}" target="_blank" class="uk-button uk-button-text">Скачать</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+    </div>
+{% endblock %}
+
