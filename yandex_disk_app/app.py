@@ -13,4 +13,4 @@ app.register_blueprint(files_bp)
 app.register_blueprint(errors_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="127.0.0.1", port=5002)

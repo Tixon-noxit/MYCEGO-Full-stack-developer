@@ -30,15 +30,26 @@ def browse_folder():
     if isinstance(access_token, str) is False:
         return access_token
 
-    # Получение пути папки
     path = request.args.get('path', '/')
     headers = {'Authorization': f'OAuth {access_token}'}
     params = {'public_key': HARDCODED_PUBLIC_KEY, 'path': path}
 
-    # Запрос содержимого папки
     response = requests.get(f"{YANDEX_API_BASE_URL}", headers=headers, params=params)
     if response.status_code == 200:
         folder_content = response.json()
         files = folder_content['_embedded']['items']
-        return render_template('files.html', context={'files': files})
+
+        breadcrumbs = []
+        if path != '/':
+            parts = path.strip('/').split('/')
+            for i, part in enumerate(parts):
+                breadcrumbs.append({
+                    'name': part,
+                    'path': '/' + '/'.join(parts[:i + 1])
+                })
+
+        return render_template(
+            'files.html',
+            context={'files': files, 'breadcrumbs': breadcrumbs, 'current_path': path}
+        )
     return f"Ошибка доступа: {response.text}", 400
