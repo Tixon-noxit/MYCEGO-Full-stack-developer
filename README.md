@@ -1,6 +1,9 @@
 # MYCEGO-Full-stack-developer
 Test assignment for the position of “Full-stack developer” at MYCEGO
 
+## [Установка и запуск](./INSTALL.md)
+
+
 #### Задание:
 Создайте веб-приложение на Flask или Django, которое взаимодействует с API Яндекс.Диска. 
 

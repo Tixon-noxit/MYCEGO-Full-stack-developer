@@ -75,11 +75,12 @@ def logout() -> 'werkzeug.wrappers.Response':
     """
     Выход из системы и удаление токена из сессии.
 
-    Удаляет `access_token` из текущей сессии и перенаправляет пользователя
+    Удаляет `access_token` и `public_key` из текущей сессии и перенаправляет пользователя
     на главную страницу.
 
     Возвращает:
         werkzeug.wrappers.Response: Ответ с редиректом на главную страницу.
     """
     session.pop('access_token', None)
+    session.pop('public_key', None)
     return redirect(url_for('index.index'))
