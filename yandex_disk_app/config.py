@@ -1,6 +1,9 @@
 import os
 
 # Конфигурация приложения
+MAIN_APP_HOST = os.getenv('MAIN_APP_HOST', '127.0.0.1')
+MAIN_APP_PORT = os.getenv('MAIN_APP_PORT', '5008')
+
 CLIENT_ID = os.getenv('CLIENT_ID', 'template_client_id')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'template_client_secret')
 REDIRECT_URI = os.getenv('REDIRECT_URI', 'http://127.0.0.1:5008/callback')
