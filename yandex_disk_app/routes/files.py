@@ -29,10 +29,13 @@ def get_public_key(public_key_or_url) -> str:
         Возвращает:
             str: Публичный ключ.
         """
+    if not public_key_or_url:
+        return None
     url_pattern = r"https?://disk\.yandex\.ru/(public/)?[a-z]/([A-Za-z0-9_-]+)"
     match = re.match(url_pattern, public_key_or_url)
     if match:
         return match.group(2)
+
     return public_key_or_url
 
 
