@@ -20,7 +20,8 @@ def index() -> str:
     Возвращает:
         str: HTML-код главной страницы.
     """
-    return render_template('index.html')
+    public_key = session.get('public_key') or ''
+    return render_template('index.html', public_key=public_key)
 
 
 @index_bp.route('/login')

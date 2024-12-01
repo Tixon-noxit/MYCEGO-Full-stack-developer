@@ -120,7 +120,7 @@ def browse_folder() -> Response | str:
 
     path = request.args.get('path', '/')
     filter_type = request.args.get('type')
-    public_key = get_public_key(request.args.get('public_key') or session.get('public_key'))
+    public_key = get_public_key(request.args.get('public_key') or '')
     if not public_key:
         flash("Путь к папке не указан!")
         return redirect(url_for('index.index'))
