@@ -1,4 +1,4 @@
-from flask import Blueprint, session, redirect, url_for, render_template, g, flash
+from flask import Blueprint, session, redirect, url_for, render_template, flash
 from config import YANDEX_AUTH_URL, CLIENT_ID, REDIRECT_URI
 from oauth import get_access_token
 
@@ -25,11 +25,13 @@ def callback():
 
     code = request.args.get('code')
     if not code:
-        return 'Ошибка: код авторизации не получен.', 400
+        flash("Ошибка: код авторизации не получен.")
+        return redirect(url_for('index.index'))
 
     token, error = get_access_token(code)
     if error:
-        return f"Ошибка получения токена: {error}", 400
+        flash(f"Ошибка получения токена: {error}")
+        return redirect(url_for('index.index'))
 
     public_key = session.get('public_key')
     if public_key:

@@ -4,8 +4,20 @@
 {% endblock %}
 {% block title %}Файлы на Яндекс.Диске{% endblock %}
 {% block content %}
+    {# filter start #}
+    <div class="uk-margin-bottom">
+        <label for="filter-type">Фильтр:</label>
+        <select id="filter-type" class="uk-select uk-width-auto" onchange="applyFilter()">
+            <option value="">Все</option>
+            <option value="folder" {% if context.filter_type == 'folder' %}selected{% endif %}>Папки</option>
+            <option value="image" {% if context.filter_type == 'image' %}selected{% endif %}>Изображения</option>
+            <option value="video" {% if context.filter_type == 'video' %}selected{% endif %}>Видео</option>
+            <option value="document" {% if context.filter_type == 'document' %}selected{% endif %}>Документы</option>
+        </select>
+    </div>
+    {# filter end #}
 
-    {#    Модальное окно    #}
+    {#    modal window start    #}
     <div id="modal-example" uk-modal>
         <div class="uk-modal-dialog uk-modal-body">
             <h2 class="uk-modal-title">Внимание!</h2>
@@ -15,9 +27,10 @@
             </p>
         </div>
     </div>
+    {#    modal window end    #}
 
     <div class="uk-container uk-margin-top">
-        {#    Навигация    #}
+        {#    breadcrumb start    #}
         <nav class="uk-margin-bottom">
             <ul class="uk-breadcrumb">
                 <li>
@@ -34,18 +47,25 @@
                 {% endfor %}
             </ul>
         </nav>
+        {#    breadcrumb end    #}
 
-        {#    Список файлов    #}
+        {#    list files  start  #}
         <ul class="uk-list uk-list-divider">
             {% for file in context.files %}
                 <li class="uk-flex uk-flex-middle">
                     <input type="checkbox" class="uk-margin-small-right" name="selected_files" value="{{ file.file }}"
                            {% if not file.file %}disabled{% endif %}>
                     <div>
-                        {% if file.size %}
-                            <img src="{{ file.preview }}" width="100" height="67" alt="{{ file.name }}">
-                        {% else %}
+                        {% if file.type == 'dir' %}
                             <img src="/static/img/folder.svg" width="100" height="50" alt="{{ file.name }}">
+                        {% elif file.preview and file.mime_type == 'image/jpeg' %}
+                            <img src="{{ file.preview }}" width="100" height="67" alt="{{ file.name }}">
+                        {% elif file.mime_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' %}
+                            <img src="/static/img/sheets.png" width="100" height="50" alt="{{ file.name }}">
+                        {% elif file.mime_type == 'video/mp4' %}
+                            <img src="/static/img/video.png" width="100" height="50" alt="{{ file.name }}">
+                        {% else %}
+                            <img src="/static/img/file.png" width="100" height="50" alt="{{ file.name }}">
                         {% endif %}
                     </div>
                     <div class="uk-flex-1 uk-margin-left">
@@ -63,8 +83,9 @@
                 </li>
             {% endfor %}
         </ul>
+        {#    list files  end  #}
 
-         {% if context.files|selectattr('file', 'defined')|list|length > 1 %}
+        {% if context.files|selectattr('file', 'defined')|list|length > 1 %}
             <div class="uk-margin-top uk-text-right">
                 <button id="download-selected" class="uk-button uk-button-danger">Скачать выбранные</button>
             </div>
@@ -73,36 +94,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        document.getElementById('download-selected').addEventListener('click', function () {
-            const button = document.getElementById('download-selected');
-            button.classList.add('uk-hidden');
-            setTimeout(() => {
-                button.classList.remove('uk-hidden');
-            }, 5000);
-
-            const selectedFiles = Array.from(document.querySelectorAll('input[name="selected_files"]:checked'))
-                .map(checkbox => checkbox.value);
-
-            if (selectedFiles.length === 0) {
-                const modal = UIkit.modal("#modal-example");
-                modal.show();
-                return;
-            }
-
-            selectedFiles.forEach((file, index) => {
-                setTimeout(() => {
-                    const a = document.createElement('a');
-                    a.href = file;
-                    a.target = '_blank';
-                    a.download = '';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }, 3000 * index);
-            });
-        });
-    </script>
-
+    <script src="/static/js/filter.js"></script>
+    <script src="/static/js/check_selected.js"></script>
 {% endblock %}
 

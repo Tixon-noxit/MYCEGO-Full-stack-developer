@@ -1,7 +1,8 @@
-from flask import Blueprint, request, render_template, g, redirect, url_for, flash
-import requests, re
 import json
+import re
+import requests
 from config import YANDEX_API_BASE_URL
+from flask import Blueprint, request, render_template, g, redirect, url_for, flash
 
 files_bp = Blueprint('files', __name__)
 
@@ -44,7 +45,7 @@ def show_files():
 
     public_key = get_public_key(request.args.get('public_key') or session.get('public_key'))
     if not public_key:
-        flash("Путь к папке не указан")
+        flash("Путь к папке не указан!")
         return redirect(url_for('index.index'))
 
     session['public_key'] = public_key
@@ -64,9 +65,10 @@ def browse_folder():
     from flask import session
 
     path = request.args.get('path', '/')
+    filter_type = request.args.get('type')
     public_key = get_public_key(request.args.get('public_key') or session.get('public_key'))
     if not public_key:
-        flash("Путь к папке не указан")
+        flash("Путь к папке не указан!")
         return redirect(url_for('index.index'))
 
     if 'public_key' not in session or session['public_key'] != public_key:
@@ -81,6 +83,21 @@ def browse_folder():
         flash(f"Ошибка: {error_message}")
         return redirect(url_for('index.index'))
 
+        # Фильтруем файлы по типу
+    if filter_type:
+        files = [
+            file for file in files
+            if (
+                       filter_type == 'image' and file.get('mime_type', '').startswith('image/')
+               ) or (
+                       filter_type == 'video' and file.get('mime_type', '').startswith('video/')
+               ) or (
+                       filter_type == 'document' and 'application/' in file.get('mime_type', '')
+               ) or (
+                       filter_type == 'folder' and file.get('type') == 'dir'
+               )
+        ]
+
     breadcrumbs = []
     if path != '/':
         parts = path.strip('/').split('/')
@@ -92,5 +109,5 @@ def browse_folder():
 
     return render_template(
         'files.html',
-        context={'files': files, 'breadcrumbs': breadcrumbs, 'current_path': path}
+        context={'files': files, 'breadcrumbs': breadcrumbs, 'current_path': path, 'filter_type': filter_type}
     )

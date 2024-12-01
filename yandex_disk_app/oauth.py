@@ -1,6 +1,7 @@
 import requests
-from flask import session, redirect, url_for
+from flask import session, redirect, url_for, flash
 from config import YANDEX_TOKEN_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+from routes.files import parse_message_in_error
 
 
 def get_access_token(code):
@@ -14,7 +15,8 @@ def get_access_token(code):
     }
     response = requests.post(YANDEX_TOKEN_URL, data=token_data)
     if response.status_code != 200:
-        return None, response.text
+        flash(f"Ошибка получения токена: {parse_message_in_error(response.text)}")
+        return redirect(url_for('index.index'))
     token = response.json()
     session['access_token'] = token['access_token']
     return token['access_token'], None
